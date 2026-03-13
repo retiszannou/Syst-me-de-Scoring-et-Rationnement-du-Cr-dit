@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/ build/ .eggs/
+
+# Envs
+venv/ env/ .venv/ .env/
+
+# Data brutes (volumineuses)
+data/raw/
+# Garder processed si léger
+data/processed/home_credit_raw.csv
+data/processed/home_credit_encoded.csv
+
+# Modèles binaires
+models/*.pkl
+
+# Garder métriques + noms
+!models/metrics.json
+!models/feature_names.json
+!models/best_model_name.txt
+
+# Kaggle credentials
+.kaggle/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/ .vscode/ *.swp
+
+# OS
+.DS_Store Thumbs.db
+
+# Logs
+*.log logs/
+
+# Tests
+.coverage htmlcov/ .pytest_cache/
+
+# Streamlit secrets
+.streamlit/secrets.toml

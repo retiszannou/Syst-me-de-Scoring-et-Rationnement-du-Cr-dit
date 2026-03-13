@@ -1,154 +1,86 @@
-# 🏦 CréditScope — Scoring & Rationnement du Crédit
+# Système de Scoring et Rationnement du Crédit
 
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![LightGBM](https://img.shields.io/badge/LightGBM-4.1-green.svg)](https://lightgbm.readthedocs.io)
+Un projet personnel que j'ai réalisé pour explorer le Machine Learning appliqué à la finance.
+L'idée de base : à partir du profil d'un demandeur de crédit, est-ce qu'on peut prédire s'il va rembourser ou pas ?
 
-> Application de scoring crédit par Machine Learning pour décider d'**accorder ou rationner** un crédit selon le profil du demandeur.
-> Basé sur le **Home Credit Default Risk Dataset** (Kaggle — 307 511 demandes, 122 variables).
+J'ai utilisé le dataset **Home Credit Default Risk** disponible sur Kaggle (plus de 300 000 demandes de crédit réelles).
 
 ---
 
-## 🎬 Démo
+## C'est quoi le rationnement du crédit ?
 
-| Évaluation d'un profil | Exploration des données | Performance des modèles |
-|:---:|:---:|:---:|
-| Interface de saisie + gauge score | Distributions & corrélations | Courbes ROC, matrice de confusion |
+En gros, c'est quand une banque refuse d'accorder un prêt, pas forcément parce que la personne est insolvable, mais parce qu'elle n'a pas assez d'informations pour évaluer le risque. C'est un concept théorisé par Stiglitz et Weiss en 1981.
 
----
-
-## 🎯 Objectif
-
-Le **rationnement du crédit** (Stiglitz & Weiss, 1981) est le refus d'accorder un prêt malgré la volonté de payer le taux en vigueur — phénomène dû à l'asymétrie d'information.
-
-Ce projet implémente un système de scoring qui :
-1. Calcule un **score crédit [300–850]** à partir du profil d'un demandeur
-2. Retourne une décision **ACCORDER / RATIONNER** avec probabilité de défaut
-3. Explique les facteurs ayant conduit à la décision
+Ce projet essaie de répondre à cette question avec le ML : **accorder ou rationner ?**
 
 ---
 
-## 🚀 Démarrage rapide
+## Ce que fait l'application
+
+- On entre le profil d'un demandeur (revenus, âge, historique de crédit, etc.)
+- Le modèle calcule une probabilité de défaut
+- Il retourne un score entre 300 et 850 et une décision : **ACCORDER** ou **RATIONNER**
+
+---
+
+## Technologies utilisées
+
+- Python
+- Streamlit pour l'interface
+- LightGBM, XGBoost, Random Forest, Régression Logistique
+- scikit-learn, pandas, numpy, plotly
+
+---
+
+## Lancer le projet
 
 ```bash
-# 1. Cloner le dépôt
-git clone https://github.com/votre-username/credit-scoring-home-credit.git
-cd credit-scoring-home-credit
+# Cloner le dépôt
+git clone https://github.com/retiszannou/Syst-me-de-Scoring-et-Rationnement-du-Cr-dit.git
+cd Syst-me-de-Scoring-et-Rationnement-du-Cr-dit
 
-# 2. Environnement virtuel
-python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
-
-# 3. Dépendances
+# Installer les dépendances
 pip install -r requirements.txt
 
-# 4. Préparer données + entraîner
-#    Option A — avec vos fichiers Kaggle dans data/raw/
+# Entraîner le modèle (sans Kaggle, des données synthétiques sont générées automatiquement)
 python src/train.py
 
-#    Option B — sans Kaggle (génère ~5 000 observations synthétiques)
-python src/train.py --sample 5000
-
-# 5. Lancer l'app
+# Lancer l'app
 streamlit run app.py
 ```
 
-L'application est accessible sur **http://localhost:8501**
+Si vous avez les données Kaggle, placez `application_train.csv` dans `data/raw/` avant de lancer `train.py`.
 
 ---
 
-## 📦 Données — Home Credit Default Risk
+## Résultats obtenus
 
-Télécharger depuis [Kaggle](https://www.kaggle.com/c/home-credit-default-risk/data) et placer dans `data/raw/` :
+| Modèle | AUC-ROC |
+|---|---|
+| Logistic Regression | 0.71 |
+| Random Forest | 0.73 |
+| XGBoost | 0.75 |
+| LightGBM | 0.76 |
 
-```
-data/raw/
-├── application_train.csv    ← obligatoire
-├── application_test.csv
-├── bureau.csv
-├── bureau_balance.csv
-├── previous_application.csv
-├── installments_payments.csv
-├── credit_card_balance.csv
-└── POS_CASH_balance.csv
-```
-
-> **Sans Kaggle ?** Le pipeline génère automatiquement des données synthétiques réalistes.
+LightGBM donne les meilleurs résultats sur ce dataset.
 
 ---
 
-## 📁 Structure
+## Structure du projet
 
 ```
-credit-scoring/
-├── app.py                    # Application Streamlit (4 pages)
+├── app.py               # Interface Streamlit
 ├── src/
-│   ├── data_loader.py        # Acquisition, nettoyage, feature engineering
-│   ├── train.py              # Entraînement multi-modèles + sauvegarde
-│   └── predict.py            # Scoring d'un profil individuel
-├── data/
-│   ├── raw/                  # Fichiers Kaggle bruts
-│   └── processed/            # CSV nettoyés & encodés
-├── models/                   # Modèles .pkl + metrics.json
-├── tests/                    # Tests unitaires pytest
-├── .streamlit/config.toml    # Thème sombre
-├── .github/workflows/ci.yml  # Pipeline CI GitHub Actions
+│   ├── data_loader.py   # Chargement et préparation des données
+│   ├── train.py         # Entraînement des modèles
+│   └── predict.py       # Prédiction pour un profil donné
+├── models/              # Modèles sauvegardés
+├── tests/               # Tests unitaires
 └── requirements.txt
 ```
 
 ---
 
-## 🤖 Modèles
+## Référence principale
 
-| Modèle | AUC-ROC* | Avg Precision |
-|---|---|---|
-| Logistic Regression | ~0.71 | ~0.24 |
-| Random Forest | ~0.73 | ~0.27 |
-| **LightGBM** | **~0.76** | **~0.31** |
-| XGBoost | ~0.75 | ~0.30 |
-
-\* Sur données synthétiques — les scores sur données Kaggle réelles sont significativement meilleurs.
-
-### Features construites
-
-- `CREDIT_INCOME_RATIO` — ratio crédit / revenu annuel
-- `ANNUITY_INCOME_RATIO` — ratio mensualité / revenu
-- `AGE_YEARS`, `EMPLOYED_YEARS`, `EMPLOYED_RATIO`
-- `EXT_SOURCES_MEAN / MIN / STD` — agrégation des 3 scores externes
-- `SOCIAL_CIRCLE_DEF_RATE` — taux de défaut dans l'entourage
-
----
-
-## 🧪 Tests
-
-```bash
-pytest tests/ -v
-```
-
----
-
-## ☁️ Déploiement Streamlit Cloud
-
-1. Pusher sur GitHub
-2. Aller sur [share.streamlit.io](https://share.streamlit.io)
-3. Connecter le dépôt → `app.py` → **Deploy**
-
----
-
-## 📚 Références
-
-- Stiglitz, J.E. & Weiss, A. (1981). *Credit Rationing in Markets with Imperfect Information*. American Economic Review.
-- Ke, G. et al. (2017). *LightGBM: A Highly Efficient Gradient Boosting Decision Tree*. NeurIPS.
-- Home Credit Group (2018). [Kaggle Competition](https://www.kaggle.com/c/home-credit-default-risk)
-
----
-
-## ⚠️ Avertissement
-
-Projet **éducatif**. Les décisions réelles nécessitent le respect du RGPD, des réglementations bancaires et des principes d'équité algorithmique.
-
----
-
-## 📄 Licence
-
-[MIT](LICENSE) © 2024
+Stiglitz, J.E. & Weiss, A. (1981). *Credit Rationing in Markets with Imperfect Information*. American Economic Review.

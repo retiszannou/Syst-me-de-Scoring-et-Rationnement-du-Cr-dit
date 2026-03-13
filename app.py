@@ -609,3 +609,5 @@ streamlit run app.py
 
 > ⚠️ **Projet à but éducatif.** Les décisions réelles doivent respecter le RGPD et les réglementations bancaires (équité algorithmique, non-discrimination).
 """)
+ 
+ 
